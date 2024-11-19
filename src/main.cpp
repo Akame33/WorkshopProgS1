@@ -11,7 +11,6 @@ void green_only(sil::Image &image)
         {
             image.pixel(x, y).r = 0;
             image.pixel(x, y).b = 0;
-            // test
         }
     }
 }
@@ -113,25 +112,39 @@ void rotating(sil::Image&image){
     image = new_image;
 }
 
+
+
 void rgb_split(sil::Image &image)
 {
-    for (int x{0}; x < image.width(); x++)
-    {
-        for (int y{0}; y < image.height(); y++)
-        {
-            image.pixel(x,y).g = 1;
+    sil::Image splitImage {image};
 
-          /*if (image.pixel(x,y).r = )
-            {
+  for(int x{0}; x < image.width(); x++) {
+        for(int y{0}; y < image.height(); y++) {
+            if(x < 30) {
+                splitImage.pixel(x, y).b = image.pixel(x + 30, y).b;
+            } else if (x > image.width() - 31) {
+                splitImage.pixel(x, y).r = image.pixel(x - 30, y).r;
+            } else {
+                splitImage.pixel(x, y).r = image.pixel(x - 30, y).r;
+                splitImage.pixel(x, y).b = image.pixel(x + 30, y).b;
             }
-            if (image.pixel(x, y).r = )
-            {
-            } */ 
         }
     }
+        image = splitImage;
+
+
 }
 
+ void luminosity(sil::Image&image){
+   
+    for (int y{0}; y < new_image.height(); y++)
+    {
+        for (int x{0}; x < new_image.width(); x++)
+        {
 
+        }
+    } 
+} 
 
 int main()
 {
@@ -186,5 +199,11 @@ int main()
     sil::Image image{"images/logo.png"};
     rgb_split(image);
     image.save("output/rgb_split.png");
+    } 
+
+    {
+    sil::Image image{"images/photo.jpg"};
+    luminosity(image);
+    image.save("output/luminosity.png"); 
     } 
 }
