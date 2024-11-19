@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cmath>
 
-
 // Exercice "Ne gardez que le vert"
 void green_only(sil::Image &image)
 {
@@ -169,6 +168,69 @@ void light_luminosity(sil::Image &image)
     }
 }
 
+void disk(sil::Image &image)
+{
+    int h{image.width()/2};
+    int k{image.height()/2};
+    int r{100};
+
+    for (int x{0}; x < image.width(); x++)
+
+    {
+        for (int y{0}; y < image.height(); y++)
+
+        {
+            if(pow(x-h,2) + pow(y-k,2) < pow(r,2)) {
+                image.pixel(x, y).r = 1;
+                image.pixel(x, y).g = 1;
+                image.pixel(x, y).b = 1;
+            }
+            else{
+                image.pixel(x, y).r = 0;
+                image.pixel(x, y).g = 0;
+                image.pixel(x, y).b = 0;
+            }
+
+        }
+    }
+}
+
+void circle(sil::Image &image) 
+{
+    int h {image.width()/2};
+    int k {image.height()/2};
+    int r {100};
+    int thickness {10};
+
+    for (int x{0}; x < image.width(); x++)
+
+    {
+        for (int y{0}; y < image.height(); y++)
+
+        {
+            if(pow(x-h,2) + pow(y-k,2) < pow(r - thickness,2)) {
+                image.pixel(x, y).r = 0;
+                image.pixel(x, y).g = 0;
+                image.pixel(x, y).b = 0;
+            }
+            else if (pow(x-h,2) + pow(y-k,2) < pow(r, 2)){
+                image.pixel(x, y).r = 1;
+                image.pixel(x, y).g = 1;
+                image.pixel(x, y).b = 1;
+            }
+
+            else{
+                image.pixel(x, y).r = 0;
+                image.pixel(x, y).g = 0;
+                image.pixel(x, y).b = 0;
+
+            }
+
+        }
+    }
+}
+
+
 int main()
 {
     {
@@ -234,5 +296,17 @@ int main()
         sil::Image image{"images/photo.jpg"};
         light_luminosity(image);
         image.save("output/light_luminosity.png");
+    }
+
+    {
+        sil::Image image{500, 500};
+        disk(image);
+        image.save("output/disk.png");
+    }
+
+   {
+        sil::Image image{500, 500};
+        circle(image);
+        image.save("output/circle.png"); 
     }
 }
