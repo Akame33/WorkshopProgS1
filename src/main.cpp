@@ -11,6 +11,7 @@ void green_only(sil::Image &image)
         {
             image.pixel(x, y).r = 0;
             image.pixel(x, y).b = 0;
+            // test
         }
     }
 }
@@ -120,12 +121,12 @@ void rgb_split(sil::Image &image)
         {
             image.pixel(x,y).g = 1;
 
-           if (image.pixel(x,y).r = )
+          /*if (image.pixel(x,y).r = )
             {
             }
             if (image.pixel(x, y).r = )
             {
-            }
+            } */ 
         }
     }
 }
