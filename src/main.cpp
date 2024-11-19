@@ -170,8 +170,8 @@ void light_luminosity(sil::Image &image)
 
 void disk(sil::Image &image)
 {
-    int h{image.width()/2};
-    int k{image.height()/2};
+    int h{image.width() / 2};
+    int k{image.height() / 2};
     int r{100};
 
     for (int x{0}; x < image.width(); x++)
@@ -180,27 +180,28 @@ void disk(sil::Image &image)
         for (int y{0}; y < image.height(); y++)
 
         {
-            if(pow(x-h,2) + pow(y-k,2) < pow(r,2)) {
+            if (pow(x - h, 2) + pow(y - k, 2) < pow(r, 2))
+            {
                 image.pixel(x, y).r = 1;
                 image.pixel(x, y).g = 1;
                 image.pixel(x, y).b = 1;
             }
-            else{
+            else
+            {
                 image.pixel(x, y).r = 0;
                 image.pixel(x, y).g = 0;
                 image.pixel(x, y).b = 0;
             }
-
         }
     }
 }
 
-void circle(sil::Image &image) 
+void circle(sil::Image &image)
 {
-    int h {image.width()/2};
-    int k {image.height()/2};
-    int r {100};
-    int thickness {10};
+    int h{image.width() / 2};
+    int k{image.height() / 2};
+    int r{100};
+    int thickness{10};
 
     for (int x{0}; x < image.width(); x++)
 
@@ -208,26 +209,88 @@ void circle(sil::Image &image)
         for (int y{0}; y < image.height(); y++)
 
         {
-            if(pow(x-h,2) + pow(y-k,2) < pow(r - thickness,2)) {
+            if (pow(x - h, 2) + pow(y - k, 2) < pow(r - thickness, 2))
+            {
                 image.pixel(x, y).r = 0;
                 image.pixel(x, y).g = 0;
                 image.pixel(x, y).b = 0;
             }
-            else if (pow(x-h,2) + pow(y-k,2) < pow(r, 2)){
+            else if (pow(x - h, 2) + pow(y - k, 2) < pow(r, 2))
+            {
                 image.pixel(x, y).r = 1;
                 image.pixel(x, y).g = 1;
                 image.pixel(x, y).b = 1;
             }
 
-            else{
+            else
+            {
                 image.pixel(x, y).r = 0;
                 image.pixel(x, y).g = 0;
                 image.pixel(x, y).b = 0;
-
             }
-
         }
     }
+}
+
+void rosace(sil::Image &image)
+{
+
+    int r{100};
+    int thickness{5};
+
+    for (int x{0}; x < image.width(); x++)
+
+    {
+        for (int y{0}; y < image.height(); y++)
+
+        {
+
+            int dx = x - image.width() / 2;
+            int dy = y - image.height() / 2;
+            if ((dx * dx + dy * dy <= r * r) && (dx * dx + dy * dy > (r - thickness) * (r - thickness)))
+            {
+                image.pixel(x, y).r = 1.0f;
+                image.pixel(x, y).g = 1.0f;
+                image.pixel(x, y).b = 1.0f;
+            }
+        }
+    }
+    int centreX = image.width() / 2;
+    int centreY = image.height() / 2;
+    float angleStep = 2 * 3.14 / 6;
+    for (int i = 0; i < 6; i++)
+    {
+        float angle = i * angleStep;
+        int offsetX = static_cast<int>(r * cos(angle));
+        int offsetY = static_cast<int>(r * sin(angle));
+
+        for (int x = 0; x < image.width(); x++)
+        {
+            for (int y = 0; y < image.height(); y++)
+            {
+                int dx = x - centreX - offsetX;
+                int dy = y - centreY - offsetY;
+
+                if ((dx * dx + dy * dy <= r * r) && (dx * dx + dy * dy > (r - thickness) * (r - thickness)))
+                {
+                    image.pixel(x, y).r = 1.0f;
+                    image.pixel(x, y).g = 1.0f;
+                    image.pixel(x, y).b = 1.0f;
+                }
+            }
+        }
+    }
+}
+
+void mosaique(sil::Image &image)
+{
+    for (int x{0}; x < image.width(); ++x)
+    {
+        for (int y{0}; y < image.height(); ++y)
+        {
+            image.pixel(x, y) %= 6;
+    }
+}
 }
 
 
@@ -304,9 +367,19 @@ int main()
         image.save("output/disk.png");
     }
 
-   {
+    {
         sil::Image image{500, 500};
         circle(image);
-        image.save("output/circle.png"); 
+        image.save("output/circle.png");
+    }
+    {
+        sil::Image image{500, 500};
+        rosace(image);
+        image.save("output/rosace.png");
+    }
+    {
+        sil::Image image{"images/logo.png"};
+        mosaique(image);
+        image.save("output/mosaique.png");
     }
 }
