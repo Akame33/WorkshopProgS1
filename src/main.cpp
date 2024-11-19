@@ -1,6 +1,8 @@
 #include <sil/sil.hpp>
 #include "random.hpp"
 #include <iostream>
+#include <cmath>
+
 
 // Exercice "Ne gardez que le vert"
 void green_only(sil::Image &image)
@@ -15,7 +17,7 @@ void green_only(sil::Image &image)
     }
 }
 
-// Exercice 
+// Exercice
 void channels_swap(sil::Image &image)
 {
     for (int x{0}; x < image.width(); x++)
@@ -97,7 +99,8 @@ void noise(sil::Image &image)
     }
 }
 
-void rotating(sil::Image&image){
+void rotating(sil::Image &image)
+{
     int new_width = image.height();
     int new_height = image.width();
 
@@ -106,52 +109,72 @@ void rotating(sil::Image&image){
     {
         for (int x{0}; x < new_image.width(); x++)
         {
-           new_image.pixel(x, y) =image.pixel (image.width() - 1 - y, x);
+            new_image.pixel(x, y) = image.pixel(image.width() - 1 - y, x);
         }
-    } 
+    }
     image = new_image;
 }
 
-
-
 void rgb_split(sil::Image &image)
 {
-    sil::Image splitImage {image};
+    sil::Image splitImage{image};
 
-  for(int x{0}; x < image.width(); x++) {
-        for(int y{0}; y < image.height(); y++) {
-            if(x < 30) {
+    for (int x{0}; x < image.width(); x++)
+    {
+        for (int y{0}; y < image.height(); y++)
+        {
+            if (x < 30)
+            {
                 splitImage.pixel(x, y).b = image.pixel(x + 30, y).b;
-            } else if (x > image.width() - 31) {
+            }
+            else if (x > image.width() - 31)
+            {
                 splitImage.pixel(x, y).r = image.pixel(x - 30, y).r;
-            } else {
+            }
+            else
+            {
                 splitImage.pixel(x, y).r = image.pixel(x - 30, y).r;
                 splitImage.pixel(x, y).b = image.pixel(x + 30, y).b;
             }
         }
     }
-        image = splitImage;
-
-
+    image = splitImage;
 }
 
- void luminosity(sil::Image&image){
-   
-    for (int y{0}; y < new_image.height(); y++)
-    {
-        for (int x{0}; x < new_image.width(); x++)
-        {
+void dark_luminosity(sil::Image &image)
+{
 
+    for (int y = 0; y < image.height(); ++y)
+    {
+        for (int x = 0; x < image.width(); ++x)
+        {
+            image.pixel(x, y).r = std::pow(image.pixel(x, y).r, 2);
+            image.pixel(x, y).g = std::pow(image.pixel(x, y).g, 2);
+            image.pixel(x, y).b = std::pow(image.pixel(x, y).b, 2);
         }
-    } 
-} 
+    }
+}
+
+void light_luminosity(sil::Image &image)
+{
+
+    for (int y = 0; y < image.height(); ++y)
+    {
+        for (int x = 0; x < image.width(); ++x)
+        {
+            image.pixel(x, y).r = std::sqrt(image.pixel(x, y).r);
+            image.pixel(x, y).g = std::sqrt(image.pixel(x, y).g);
+            image.pixel(x, y).b = std::sqrt(image.pixel(x, y).b);
+        }
+    }
+}
 
 int main()
 {
     {
         sil::Image image{"images/logo.png"};
         green_only(image);
-        image.save("output/pouet.png");
+        image.save("output/green_only.png");
     }
 
     {
@@ -191,19 +214,25 @@ int main()
     }
 
     {
-    sil::Image image{"images/logo.png"};
-    rotating(image);
-    image.save("output/rotation.png");
-    } 
+        sil::Image image{"images/logo.png"};
+        rotating(image);
+        image.save("output/rotation.png");
+    }
     {
-    sil::Image image{"images/logo.png"};
-    rgb_split(image);
-    image.save("output/rgb_split.png");
-    } 
+        sil::Image image{"images/logo.png"};
+        rgb_split(image);
+        image.save("output/rgb_split.png");
+    }
 
     {
-    sil::Image image{"images/photo.jpg"};
-    luminosity(image);
-    image.save("output/luminosity.png"); 
-    } 
+        sil::Image image{"images/photo.jpg"};
+        dark_luminosity(image);
+        image.save("output/dark_luminosity.png");
+    }
+
+    {
+        sil::Image image{"images/photo.jpg"};
+        light_luminosity(image);
+        image.save("output/light_luminosity.png");
+    }
 }
