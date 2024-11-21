@@ -5,6 +5,8 @@
 #include <vector>
 #include <algorithm>
 #include "sous_fonction/sous_fonction.hpp"
+#include <complex>
+#include <glm/gtx/matrix_transform_2d.hpp>
 
 // Exercice "Ne gardez que le vert"
 void green_only(sil::Image &image)
@@ -243,6 +245,38 @@ void circle(sil::Image &image)
     }
 }
 
+// Animation
+void animation(sil::Image &image)
+{
+
+    int a{0};
+    int b{image.height() / 2};
+    int r{100};
+
+    while (a < 500)
+    {
+        a++;
+        for (int x{0}; x < 500; ++x)
+        {
+            for (int y{0}; y < 500; ++y)
+            {
+                if ((pow(x - a, 2) + pow(y - b, 2)) < pow(r, 2))
+                {
+                    image.pixel(x, y).r = 1;
+                    image.pixel(x, y).g = 1;
+                    image.pixel(x, y).b = 1;
+                }
+                else
+                {
+                    image.pixel(x, y).r = 0;
+                    image.pixel(x, y).g = 0;
+                    image.pixel(x, y).b = 0;
+                }
+            }
+        }
+        image.save("output/anim/animation" + std::to_string(a) + ".png");
+    }
+}
 // Rosace
 void rosace(sil::Image &image)
 {
@@ -404,6 +438,118 @@ void gradiant_color(sil::Image &image, glm::vec3 color1, glm::vec3 color2)
     }
 }
 
+// Fractale de Mandelbrot
+void mandelbrot_fractal(sil::Image &image)
+{
+
+    glm::vec3 black{0, 0, 0};
+    glm::vec3 white{1, 1, 1};
+
+    for (int x{0}; x < image.width(); x++)
+    {
+        for (int y{0}; y < image.height(); y++)
+        {
+
+            std::complex<float> c{static_cast<float>(x) / 200 - 1.75f, static_cast<float>(y - 250) / 200}; // Définis le nombre z = 3 + 2*i
+            std::complex<float> z{0, 0};
+
+            for (int i = 0; i < 50; i++)
+            {
+                z = z * z + c;
+                if (std::abs(z) > 2)
+                {
+                    image.pixel(x, y) = glm::vec3{static_cast<float>(i) / 50.f};
+                    break;
+                }
+            }
+            if (std::abs(z) < 2)
+            {
+                image.pixel(x, y) = white;
+            }
+        }
+    }
+}
+
+// tramage
+void dithering(sil::Image &image)
+{
+    const int bayer_n = 4;
+    float bayerMatrix[bayer_n][bayer_n] = {
+        {-0.5, 0, -0.375, 0.125},
+        {0.25, -0.25, 0.375, -0.125},
+        {-0.3125, 0.1875, -0.4375, 0.0625},
+        {0.4375, -0.0625, 0.3125, -0.1875},
+    };
+
+    for (int x = 0; x < image.width(); x++)
+    {
+        for (int y = 0; y < image.height(); y++)
+        {
+            float bright = brightness(image.pixel(x, y));
+
+            float threshold = bayerMatrix[x % bayer_n][y % bayer_n];
+
+            bright + threshold > 0.5 ? image.pixel(x, y) = {1, 1, 1} : image.pixel(x, y) = {0, 0, 0};
+        }
+    }
+}
+
+void normalizing_histogram(sil::Image &image)
+{
+
+    float darkest = 1.f;
+    float whitest = 0.f;
+    for (int x{0}; x < image.width(); x++)
+    {
+        for (int y{0}; y < image.height(); y++)
+        {
+
+            glm::vec3 &pixel = image.pixel(x, y);
+            float lum = brightness(pixel);
+            if (lum < darkest)
+            {
+                // si lum est + sombre que darkest, alors on remplace darkesst par lum
+                darkest = lum;
+            }
+
+            else if (lum > whitest)
+            {
+                whitest = lum;
+            }
+
+            float normalizedLum = (lum - darkest) / (whitest - darkest);
+            pixel = pixel * (normalizedLum / lum);
+        }
+    }
+    std::cout << darkest << std::endl;
+    std::cout << whitest << std::endl;
+}
+
+void vortex(sil::Image &image) {
+    sil::Image original_image = image;
+
+    for (int x = 0; x < image.width(); x++) {
+        for (int y = 0; y < image.height(); y++) {
+            glm::vec2 current_point{x, y};
+            glm::vec2 center_of_rotation{image.width()/2, image.height()/2};
+
+            float distance = glm::distance(current_point, center_of_rotation);
+
+            float angle = 45.f * (distance / glm::length(glm::vec2(image.width(), image.height())));
+
+            glm::vec2 rotated_point = glm::vec2{glm::rotate(glm::mat3{1.f}, angle) * glm::vec3{current_point - center_of_rotation, 0.f}} + center_of_rotation;
+
+            int rotated_x = static_cast<int>(std::round(rotated_point.x));
+            int rotated_y = static_cast<int>(std::round(rotated_point.y));
+
+            if (rotated_x >= 0 && rotated_x < image.width() && rotated_y >= 0 && rotated_y < image.height()) {
+                image.pixel(x, y) = original_image.pixel(rotated_x, rotated_y);
+            } else {
+                image.pixel(x, y) = {0, 0, 0};
+            }
+        }
+    }
+}
 int main()
 {
     {
@@ -482,6 +628,11 @@ int main()
         circle(image);
         image.save("output/circle.png");
     }
+
+    {
+        sil::Image image{500, 500};
+        animation(image);
+    }
     {
         sil::Image image{500, 500};
         rosace(image);
@@ -512,8 +663,29 @@ int main()
         image.save("output/pixel_sorting.png");
     }
     {
-        sil::Image image{300, 200}; // Lis l'image
+        sil::Image image{300, 200};
         gradiant_color(image, glm::vec3{1, 0.01, 0.6}, glm::vec3{0, 1, 0});
         image.save("output/gradiant_color.png");
+    }
+
+    {
+        sil::Image image{500, 500};
+        mandelbrot_fractal(image);
+        image.save("output/fractale.png");
+    }
+    {
+        sil::Image image{"images/photo.jpg"};
+        dithering(image);
+        image.save("output/dithering.png");
+    }
+    {
+        sil::Image image{"images/photo_faible_contraste.jpg"};
+        normalizing_histogram(image);
+        image.save("output/histogram.png");
+    }
+    {
+        sil::Image image{"images/logo.png"};
+        vortex(image);
+        image.save("output/vortex.png");
     }
 }
