@@ -2,6 +2,9 @@
 #include "random.hpp"
 #include <iostream>
 #include <cmath>
+#include <vector>
+#include <algorithm>
+#include "sous_fonction/sous_fonction.hpp"
 
 // Exercice "Ne gardez que le vert"
 void green_only(sil::Image &image)
@@ -16,7 +19,7 @@ void green_only(sil::Image &image)
     }
 }
 
-// Exercice
+// changement de cannaux
 void channels_swap(sil::Image &image)
 {
     for (int x{0}; x < image.width(); x++)
@@ -28,6 +31,7 @@ void channels_swap(sil::Image &image)
     }
 }
 
+// Noir et blanc
 void black_white(sil::Image &image)
 {
     for (int x{0}; x < image.width(); x++)
@@ -45,6 +49,7 @@ void black_white(sil::Image &image)
     }
 }
 
+// Négatif
 void negative(sil::Image &image)
 {
     for (int x{0}; x < image.width(); x++)
@@ -60,6 +65,7 @@ void negative(sil::Image &image)
     }
 }
 
+// Dégradé
 void gradiant(sil::Image &image)
 {
     for (int x{0}; x < image.width(); ++x)
@@ -71,6 +77,7 @@ void gradiant(sil::Image &image)
     }
 }
 
+// Mirroir
 void mirror(sil::Image &image)
 {
     for (int x{0}; x < image.width() / 2; x++)
@@ -82,6 +89,7 @@ void mirror(sil::Image &image)
     }
 }
 
+// Bruit
 void noise(sil::Image &image)
 {
     for (int x{0}; x < image.width(); x++)
@@ -98,6 +106,7 @@ void noise(sil::Image &image)
     }
 }
 
+// Rotation
 void rotating(sil::Image &image)
 {
     int new_width = image.height();
@@ -114,32 +123,31 @@ void rotating(sil::Image &image)
     image = new_image;
 }
 
+// RGB Split
 void rgb_split(sil::Image &image)
 {
-    sil::Image splitImage{image};
+
+    sil::Image image_split{image.width(), image.height()};
 
     for (int x{0}; x < image.width(); x++)
     {
         for (int y{0}; y < image.height(); y++)
         {
-            if (x < 30)
+
+            if (x >= 30)
             {
-                splitImage.pixel(x, y).b = image.pixel(x + 30, y).b;
+                image_split.pixel(x, y).r = image.pixel(x - 30, y).r;
             }
-            else if (x > image.width() - 31)
+            if (x < image.width() - 31)
             {
-                splitImage.pixel(x, y).r = image.pixel(x - 30, y).r;
+                image_split.pixel(x, y).b = image.pixel(x + 30, y).b;
             }
-            else
-            {
-                splitImage.pixel(x, y).r = image.pixel(x - 30, y).r;
-                splitImage.pixel(x, y).b = image.pixel(x + 30, y).b;
-            }
+            image_split.pixel(x, y).g = image.pixel(x, y).g;
         }
     }
-    image = splitImage;
+    image = image_split;
 }
-
+// Luminosité foncée
 void dark_luminosity(sil::Image &image)
 {
 
@@ -154,6 +162,7 @@ void dark_luminosity(sil::Image &image)
     }
 }
 
+// Luminosité claire
 void light_luminosity(sil::Image &image)
 {
 
@@ -168,6 +177,7 @@ void light_luminosity(sil::Image &image)
     }
 }
 
+// Disque
 void disk(sil::Image &image)
 {
     int h{image.width() / 2};
@@ -196,6 +206,7 @@ void disk(sil::Image &image)
     }
 }
 
+// Cercle
 void circle(sil::Image &image)
 {
     int h{image.width() / 2};
@@ -232,6 +243,7 @@ void circle(sil::Image &image)
     }
 }
 
+// Rosace
 void rosace(sil::Image &image)
 {
 
@@ -282,17 +294,115 @@ void rosace(sil::Image &image)
     }
 }
 
+// Mosaique
 void mosaique(sil::Image &image)
 {
+    int new_width = image.width() * 5;
+    int new_height = image.height() * 5;
+
+    sil::Image new_image{new_width, new_height};
+
+    for (int x = 0; x < new_width; ++x)
+    {
+        for (int y = 0; y < new_height; ++y)
+        {
+            int old_x = x % image.width();
+            int old_y = y % image.height();
+
+            new_image.pixel(x, y) = image.pixel(old_x, old_y);
+        }
+    }
+    image = new_image;
+}
+
+// Mosaique mirroir
+void mosaique_mirror(sil::Image &image)
+{
+
+    sil::Image mosaique{image.width() * 5, image.height() * 5};
+
+    for (int x{0}; x < mosaique.width(); x++)
+    {
+        for (int y{0}; y < mosaique.height(); y++)
+        {
+            int old_x{x % image.width()};
+            int old_y{y % image.height()};
+
+            bool mirrorX{(x / image.width()) % 2 == 1};
+            bool mirrorY{(y / image.height()) % 2 == 1};
+
+            if (mirrorX)
+            {
+                old_x = image.width() - old_x - 1;
+            }
+            if (mirrorY)
+            {
+                old_y = image.height() - old_y - 1;
+            }
+
+            mosaique.pixel(x, y) = image.pixel(old_x, old_y);
+        }
+    }
+    image = mosaique;
+}
+
+// Glitch
+void glitch(sil::Image &image)
+{
+    int number_glitch = 80;
+
+    for (int i = 0; i < number_glitch; ++i)
+    {
+        int rectangle1_x = random_int(0, image.width() - 1);
+        int rectangle1_y = random_int(0, image.height() - 1);
+        int rectangle_width = random_int(5, 20);
+        int rectangle_height = random_int(1, 10);
+
+        int rectangle2_x = random_int(0, image.width() - 1);
+        int rectangle2_y = random_int(0, image.height() - 1);
+
+        rectangle_width = std::min(rectangle_width, image.width() - std::max(rectangle1_x, rectangle2_x));
+        rectangle_height = std::min(rectangle_height, image.height() - std::max(rectangle1_y, rectangle2_y));
+
+        for (int x = 0; x < rectangle_width; ++x)
+        {
+            for (int y = 0; y < rectangle_height; ++y)
+            {
+                std::swap(image.pixel(rectangle1_x + x, rectangle1_y + y), image.pixel(rectangle2_x + x, rectangle2_y + y));
+            }
+        }
+    }
+}
+
+// Tri de pixels
+void pixel_sorting(sil::Image &image)
+{
+
+    for (int i = 0; (i + 70) < image.pixels().size(); i++)
+    {
+        if (random_int(0, 150) == 75)
+        {
+            std::sort(image.pixels().begin() + i, image.pixels().begin() + (i + 70), [](glm::vec3 const &color1, glm::vec3 const &color2)
+                      { return brightness(color1) > brightness(color2); });
+            i = i + 70;
+        }
+    }
+}
+
+// Dégradé couleur
+void gradiant_color(sil::Image &image, glm::vec3 color1, glm::vec3 color2)
+{
+    color1 = linear_to_oklab(color1);
+    color2 = linear_to_oklab(color2);
     for (int x{0}; x < image.width(); ++x)
     {
         for (int y{0}; y < image.height(); ++y)
         {
-            image.pixel(x, y) %= 6;
+            // image.pixel(x, y) = glm::mix(color1, color2, static_cast<float>(x) / static_cast<float>(image.width() - 1));
+            image.pixel(x, y) = oklab_to_linear(glm::mix(color1, color2, static_cast<float>(x) / static_cast<float>(image.width() - 1)));
+        }
     }
 }
-}
-
 
 int main()
 {
@@ -381,5 +491,29 @@ int main()
         sil::Image image{"images/logo.png"};
         mosaique(image);
         image.save("output/mosaique.png");
+    }
+    {
+
+        sil::Image image{"images/logo.png"};
+        mosaique_mirror(image);
+        image.save("output/mosaic_mirror.png");
+    }
+
+    {
+        sil::Image image{"images/logo.png"};
+        glitch(image);
+        image.save("output/glitch.png");
+    }
+
+    {
+
+        sil::Image image{"images/logo.png"};
+        pixel_sorting(image);
+        image.save("output/pixel_sorting.png");
+    }
+    {
+        sil::Image image{300, 200}; // Lis l'image
+        gradiant_color(image, glm::vec3{1, 0.01, 0.6}, glm::vec3{0, 1, 0});
+        image.save("output/gradiant_color.png");
     }
 }
