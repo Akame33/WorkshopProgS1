@@ -79,7 +79,7 @@ void gradiant(sil::Image &image)
     }
 }
 
-// Mirroir
+// Miroir
 void mirror(sil::Image &image)
 {
     for (int x{0}; x < image.width() / 2; x++)
@@ -525,13 +525,16 @@ void normalizing_histogram(sil::Image &image)
     std::cout << whitest << std::endl;
 }
 
-void vortex(sil::Image &image) {
+void vortex(sil::Image &image)
+{
     sil::Image original_image = image;
 
-    for (int x = 0; x < image.width(); x++) {
-        for (int y = 0; y < image.height(); y++) {
+    for (int x = 0; x < image.width(); x++)
+    {
+        for (int y = 0; y < image.height(); y++)
+        {
             glm::vec2 current_point{x, y};
-            glm::vec2 center_of_rotation{image.width()/2, image.height()/2};
+            glm::vec2 center_of_rotation{image.width() / 2, image.height() / 2};
 
             float distance = glm::distance(current_point, center_of_rotation);
 
@@ -542,9 +545,12 @@ void vortex(sil::Image &image) {
             int rotated_x = static_cast<int>(std::round(rotated_point.x));
             int rotated_y = static_cast<int>(std::round(rotated_point.y));
 
-            if (rotated_x >= 0 && rotated_x < image.width() && rotated_y >= 0 && rotated_y < image.height()) {
+            if (rotated_x >= 0 && rotated_x < image.width() && rotated_y >= 0 && rotated_y < image.height())
+            {
                 image.pixel(x, y) = original_image.pixel(rotated_x, rotated_y);
-            } else {
+            }
+            else
+            {
                 image.pixel(x, y) = {0, 0, 0};
             }
         }
