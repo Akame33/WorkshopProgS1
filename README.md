@@ -382,7 +382,9 @@ float bright = brightness(image.pixel(x, y));
 ### Normalisation de l'histogramme ⭐⭐⭐(⭐)
 Pour cet exercice, on part d'une image différente que d'habitude :
 
-**Photo faible contraste**![photo_faible_contraste.jpg](/images/photo_faible_contraste.jpg)
+**Photo faible contraste**
+
+![photo_faible_contraste.jpg](/images/photo_faible_contraste.jpg)
 
 
 
