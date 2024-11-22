@@ -26,6 +26,7 @@ void green_only(sil::Image &image)
 }
 ```
 **Résultat final :**
+
 ![green_only](/output/green_only.png)
 
 
@@ -38,6 +39,7 @@ std::swap(image.pixel(x, y).r, image.pixel(x, y).b);
 Ce bout de code est situé au sein des boucles `for` parcourant les pixels de l'image.
 
 **Résultat final :**
+
 ![channels_swap.png](/output/channels_swap.png)
 
 
@@ -62,6 +64,7 @@ pixel.b = gray;
 ```
 
 **Résultat final :**
+
 ![black_white.png](/output/black_white.png)
 
 
@@ -79,6 +82,7 @@ pixel.g = 1.0f - pixel.g;
 pixel.b = 1.0f - pixel.b;
 ```
 **Résultat final :**
+
 ![negative.png](/output/negative.png)
 
 
@@ -92,6 +96,7 @@ On utilise la fonction standard `std::swap` pour intervertir les deux pixels :
 std::swap(image.pixel(x, y), image.pixel(image.width() - (x + 1), y));
 ```
 **Résultat final :**
+
 ![mirror.png](/output/mirror.png)
 
 ### Image bruitée ⭐⭐
@@ -112,6 +117,7 @@ if (true_with_probability(0.2f)){
 }
 ```
 **Résultat final :**
+
 ![noise.png](/output/noise.png)
 
 
@@ -127,6 +133,7 @@ Pour faire la rotation de 90° :
 - La ligne y dans la nouvelle image correspond à la colonne inversée de l'image d'origine `(image.width() - 1 - y)`.
 
 **Résultat final :**
+
 ![rotating.png](/output/rotation.png)
 
 ### RGB Split ⭐⭐
@@ -158,6 +165,7 @@ image_split.pixel(x, y).g = image.pixel(x, y).g;
 A la fin, on remplace l'image par la nouvelle avec `image = image_split;`
   
 **Résultat final :**
+
 ![rgb_split.png](/output/rgb_split.png)
 
 ### Mosaïque ⭐⭐
@@ -180,6 +188,7 @@ int old_y = y % image.height();
 La **fonction % (modulo)** assure que la valeur de old_x est toujours dans la l'intervale **[0, image.width() - 1]**. Cette utilisation du modulo permet de répéter les pixels de l'image d'origine.
 
 **Résultat final :**
+
 ![mosaique.png](/output/mosaique.png)
 
 
@@ -217,6 +226,7 @@ Puis **remplacer l'image originale par la mosaïque** :
 image = mosaique;
 ```
 **Résultat final :**
+
 ![mosaic_mirror.png](/output/mosaic_mirror.png)
 ###  Glitch ⭐⭐⭐
 
@@ -258,6 +268,7 @@ std::swap(image.pixel(rectangle1_x + x, rectangle1_y + y), image.pixel(rectangle
 ```
 
 **Résultat final :**
+
 ![glitch.png](/output/glitch.png)
 ### Tri de pixels ⭐⭐⭐
 Pour cet exercice, la boucle principale parcourt les pixels de l'image par blocs de taille 70 :
@@ -282,6 +293,7 @@ brightness(color1) > brightness(color2)
 Et on passe au bloc suivant.
 
 **Résultat final :**
+
 ![pixel_sorting.png](/output/pixel_sorting.png)
 ### Vortex ⭐⭐⭐⭐
 
@@ -300,6 +312,7 @@ glm::vec2 rotated_point = glm::vec2{glm::rotate(glm::mat3{1.f}, angle) * glm::ve
 (Voir le reste du code source pour plus d'informations).
 
 **Résultat final :**
+
 ![vortex.png](/output/vortex.png)
 ## Exercices avec l'image logo.png
 
@@ -323,6 +336,7 @@ image.pixel(x, y).g = std::sqrt(image.pixel(x, y).g);
 image.pixel(x, y).b = std::sqrt(image.pixel(x, y).b);
 ```
 **Résultat final :**
+
 ![light_luminosity
 .png](/output/light_luminosity.png)
 #### Assombrissement 
@@ -336,6 +350,7 @@ image.pixel(x, y).g = std::pow(image.pixel(x, y).g, 2);
 image.pixel(x, y).b = std::pow(image.pixel(x, y).b, 2);
 ```
 **Résultat final :**
+
 ![dark_luminosity.png](/output/dark_luminosity.png)
 
 ### Tramage ⭐⭐⭐(⭐)
@@ -360,6 +375,7 @@ float bright = brightness(image.pixel(x, y));
 (Voir le code source pour le reste)
 
 **Résultat final :**
+
 ![dithering.png](/output/dithering.png)
 
 
@@ -409,6 +425,7 @@ pixel = pixel * (normalizedLum / lum);
 ```
 
 **Résultat final :**
+
 ![histogram.png](/output/histogram.png)
 
 
@@ -420,6 +437,7 @@ Pour réaliser ce dégradé, j'ai utilisé cette formule :
 image.pixel(x, y) = glm::vec3{static_cast<float>(x) / static_cast<float>(image.width() - 1)};
 ```
 **Résultat final :**
+
 ![disk.png](/output/gradiant.png)
 
 ### Disque ⭐⭐(⭐)
@@ -459,6 +477,7 @@ image.pixel(x, y).g = 0;
 image.pixel(x, y).b = 0;
 ```
 **Résultat final :**
+
 ![disk.png](/output/disk.png)
 
 ### Cercle ⭐
@@ -496,6 +515,7 @@ else
 - **Else :** Si le pixel est en dehors du cercle, il est colorié en noir.
 
 **Résultat final :**
+
 ![circle.png](/output/circle.png)
 
 ### Animation ⭐⭐
@@ -505,6 +525,7 @@ J'utilise une variable que j'initialise à 0 et une boucle `while` pour chaque f
 J'utilise une autre variable qui elle permet de créer le coordonnée vertical du centre du cercle et qui permettra de le déplacer. 
 
 **Résultat final :**
+
 J'ai sauvegardé les images dans le répertoire **/anim** mais je n'ai aps créé l'animation sur le site de gif.
 
 ### Rosace ⭐⭐⭐
@@ -568,6 +589,7 @@ Nous pouvons y retrouver le **calcul des coordonnées du centre, de la condition
 
 
 **Résultat final :**
+
 ![rosace.png](/output/rosace.png)
 
 ### Fractale de Mandelbrot
@@ -614,6 +636,7 @@ void mandelbrot_fractal(sil::Image &image)
 
 
 **Résultat final :**
+
 ![fractale.png](/output/fractale.png)
 
 
