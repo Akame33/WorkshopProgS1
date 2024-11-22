@@ -15,7 +15,7 @@
     - [Glitch ⭐⭐⭐](#glitch-)
     - [Tri de pixels ⭐⭐⭐](#tri-de-pixels-)
     - [Vortex ⭐⭐⭐⭐](#vortex-)
-  - [Exercices avec l'image logo.png](#exercices-avec-limage-logopng-1)
+  - [Exercices avec l'image photo.jpg](#exercices-avec-limage-photojpg)
     - [Luminosité ⭐⭐](#luminosité-)
       - [Eclaircissement](#eclaircissement)
       - [Assombrissement](#assombrissement)
@@ -345,7 +345,7 @@ glm::vec2 rotated_point = glm::vec2{glm::rotate(glm::mat3{1.f}, angle) * glm::ve
 **Résultat final :**
 
 ![vortex.png](/output/vortex.png)
-## Exercices avec l'image logo.png
+## Exercices avec l'image photo.jpg
 
 Maintenant, je  vais expliquer les exercices se basant sur l'image photo.jpg.
 
